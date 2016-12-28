@@ -10,11 +10,5 @@ public class Test {
 
     public static void main(String[] args) {
 
-        List<String> a = Arrays.asList("a", "b", "c", "d");
-
-        a.stream()
-                .filter((b) -> b.equals("a") || b.equals("c"))
-                .forEach(System.out::println);
     }
-
 }

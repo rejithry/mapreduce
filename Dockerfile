@@ -15,8 +15,9 @@ RUN curl -sSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binari
 && mv /usr/share/apache-maven-$MAVEN_VERSION /usr/share/maven \
 && ln -s /usr/share/maven/bin/mvn /usr/bin/mvn
 
-ADD test.txt /
+ADD top10.txt /
 ADD url.txt /
+ADD index.txt /
 ADD build.sh /
 RUN chmod 755 /build.sh
 
