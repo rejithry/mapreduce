@@ -14,8 +14,15 @@ import java.io.IOException;
  */
 public class URLOrPageRank implements Writable {
 
+
     private Text tag;
     private Text url;
+
+    public URLOrPageRank() {
+        this.tag = new Text();
+        this.url = new Text();
+        this.pageRank = new FloatWritable();
+    }
 
     public URLOrPageRank(Text tag, Text url, FloatWritable pageRank) {
         this.tag = tag;

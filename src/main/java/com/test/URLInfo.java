@@ -12,6 +12,12 @@ import java.io.IOException;
  * Created by raghr010 on 12/27/16.
  */
 public class URLInfo implements WritableComparable<URLInfo> {
+
+    public URLInfo() {
+        this.url = new Text();
+        this.pageRank = new FloatWritable();
+    }
+
     public URLInfo(Text url, FloatWritable pageRank) {
         this.url = url;
         this.pageRank = pageRank;
@@ -57,4 +63,15 @@ public class URLInfo implements WritableComparable<URLInfo> {
     public String toString() {
         return url.toString() + ":" + pageRank.toString();
     }
+
+    @Override
+    public boolean equals(Object other) {
+        return this.url.equals(((URLInfo)other).url);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.url.hashCode();
+    }
+
 }

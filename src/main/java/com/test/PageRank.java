@@ -50,6 +50,8 @@ public class PageRank extends Configured implements Tool {
         job.setOutputFormatClass(SequenceFileOutputFormat.class);
         job.setMapOutputKeyClass(URLInfo.class);
         job.setMapOutputValueClass(Text.class);
+        job.setOutputKeyClass(URLInfo.class);
+        job.setOutputValueClass(Text.class);
 
         job.setMapperClass(MapPrepare.class);
         job.setNumReduceTasks(0);
@@ -59,25 +61,25 @@ public class PageRank extends Configured implements Tool {
             return 1;
         }
 
-        Job job2 = new Job(conf, this.getClass().toString());
+        Job job2 = new Job(conf, this.getClass().toString() + "job2");
 
-        FileInputFormat.setInputPaths(job, intermediatePath);
-        FileOutputFormat.setOutputPath(job, outputPath);
+        FileInputFormat.setInputPaths(job2, intermediatePath);
+        FileOutputFormat.setOutputPath(job2, outputPath);
 
-        job.setJobName("PageRank");
-        job.setJarByClass(PageRank.class);
-        job.setInputFormatClass(SequenceFileInputFormat.class);
-        job.setOutputFormatClass(SequenceFileOutputFormat.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(URLOrPageRank.class);
-        job.setOutputKeyClass(URLInfo.class);
-        job.setOutputValueClass(Text.class);
+        job2.setJobName("PageRank");
+        job2.setJarByClass(PageRank.class);
+        job2.setInputFormatClass(SequenceFileInputFormat.class);
+        job2.setOutputFormatClass(SequenceFileOutputFormat.class);
+        job2.setMapOutputKeyClass(Text.class);
+        job2.setMapOutputValueClass(URLOrPageRank.class);
+        job2.setOutputKeyClass(URLInfo.class);
+        job2.setOutputValueClass(Text.class);
 
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
-        job.setNumReduceTasks(1);
+        job2.setMapperClass(Map.class);
+        job2.setReducerClass(Reduce.class);
+        job2.setNumReduceTasks(1);
 
-        return job.waitForCompletion(true) ? 0 : 1;
+        return job2.waitForCompletion(true) ? 0 : 1;
     }
 
     public static class MapPrepare extends Mapper<LongWritable, Text, URLInfo, Text> {
@@ -116,8 +118,8 @@ public class PageRank extends Configured implements Tool {
             String[] outUrls = value.toString().split(",");
 
             for (String outUrl : outUrls) {
-                context.write(new Text(outUrl), new URLOrPageRank(new Text("pageRank"), null, new FloatWritable(key.getPageRank().get()/outUrls.length)));
-                context.write(new Text(key.getUrl()), new URLOrPageRank(new Text("url"), new Text(outUrl), null));
+                context.write(new Text(outUrl), new URLOrPageRank(new Text("pageRank"), new Text(), new FloatWritable(key.getPageRank().get()/outUrls.length)));
+                context.write(new Text(key.getUrl()), new URLOrPageRank(new Text("url"), new Text(outUrl), new FloatWritable()));
             }
         }
     }
