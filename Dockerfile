@@ -18,6 +18,7 @@ RUN curl -sSL http://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binari
 ADD top10.txt /
 ADD url.txt /
 ADD index.txt /
+ADD friends.txt /
 ADD build.sh /
 RUN chmod 755 /build.sh
 
