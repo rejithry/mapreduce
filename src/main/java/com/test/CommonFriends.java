@@ -69,25 +69,27 @@ public class CommonFriends extends Configured implements Tool {
             String user = users[0];
             List<String> friends = Arrays.asList(users).subList(1, users.length);
 
-            for (int  i = 0; i < friends.size(); i++) {
-                String otherFriends = "";
-                for (int j = 0; j < friends.size(); j ++) {
-                    if (i != j) {
-                        otherFriends += friends.get(j) + ",";
-                    }
-                }
+            String listOfFriendsString = "";
+            for (int j = 0; j < friends.size(); j ++) {
+                listOfFriendsString += friends.get(j) + ",";
+            }
 
-                otherFriends = otherFriends.substring(0, otherFriends.length()-1);
+            if (listOfFriendsString.length() > 0) {
+                listOfFriendsString = listOfFriendsString.substring(0, listOfFriendsString.length()-1);
+            }
+
+            for (String friend : friends) {
 
                 String outputKey = "";
 
-                if (user.compareTo(friends.get(i)) < 0) {
-                    outputKey += user + "," + friends.get(i);
+                if (user.compareTo(friend) < 0) {
+                    outputKey += user + "," + friend;
                 } else {
-                    outputKey += friends.get(i) + user;
+                    outputKey += friend +"," +  user;
                 }
 
-                context.write(new Text(outputKey),  new Text(otherFriends));
+                System.out.println(outputKey + ":" + listOfFriendsString);
+                context.write(new Text(outputKey),  new Text(listOfFriendsString));
             }
 
         }
@@ -104,9 +106,9 @@ public class CommonFriends extends Configured implements Tool {
 
             for (Text t : listOfOtherFriends) {
                 if (otherFriendsOfA == null){
-                    otherFriendsOfA = Arrays.asList(t.toString().split(","));
+                    otherFriendsOfA = new ArrayList<String>(Arrays.asList(t.toString().split(",")));
                 } else {
-                    otherFriendsOfB = Arrays.asList(t.toString().split(","));
+                    otherFriendsOfB = new ArrayList<String>(Arrays.asList(t.toString().split(",")));
                 }
             }
             otherFriendsOfA.retainAll(otherFriendsOfB);

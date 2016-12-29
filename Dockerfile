@@ -19,6 +19,8 @@ ADD top10.txt /
 ADD url.txt /
 ADD index.txt /
 ADD friends.txt /
+ADD reco.txt /
+
 ADD build.sh /
 RUN chmod 755 /build.sh
 
