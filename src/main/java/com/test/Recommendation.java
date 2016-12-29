@@ -71,7 +71,7 @@ public class Recommendation extends Configured implements Tool {
         job2.setMapOutputKeyClass(Text.class);
         job2.setMapOutputValueClass(MapWritable.class);
         job2.setOutputKeyClass(Text.class);
-        job2.setOutputValueClass(MapWritable.class);
+        job2.setOutputValueClass(Text.class);
 
         job2.setMapperClass(RecoMapper.class);
         job2.setReducerClass(RecoReducer.class);
@@ -153,7 +153,7 @@ public class Recommendation extends Configured implements Tool {
     }
 
 
-    public static class RecoReducer extends Reducer<Text, MapWritable, Text, MapWritable> {
+    public static class RecoReducer extends Reducer<Text, MapWritable, Text, Text> {
 
         public void reduce(Text key, Iterable<MapWritable> values, Context context) throws IOException, InterruptedException {
 
@@ -164,11 +164,23 @@ public class Recommendation extends Configured implements Tool {
                     if (coOccuringItems.containsKey(entry.getKey())) {
                         coOccuringItems.put((Text)entry.getKey(), new IntWritable(((IntWritable)(coOccuringItems.get(entry.getKey()))).get()
                                 + ((IntWritable)entry.getValue()).get()));
+                    } else {
+                        coOccuringItems.put((Text)entry.getKey(), (IntWritable)entry.getValue());
                     }
                 }
             }
 
-            context.write(key, coOccuringItems);
+            String coOccuringItemsString = "";
+            for (MapWritable.Entry entry : coOccuringItems.entrySet()) {
+                coOccuringItemsString += ((Text)entry.getKey()).toString() + ":" + String.valueOf(((IntWritable)entry.getValue()).get()) + ",";
+
+            }
+
+            if (coOccuringItemsString.length() > 0) {
+                coOccuringItemsString = coOccuringItemsString.substring(0, coOccuringItemsString.length()-1);
+            }
+
+            context.write(key, new Text(coOccuringItemsString));
 
         }
     }
